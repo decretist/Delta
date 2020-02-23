@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 #
-# Paul Evans (10evans@cua.edu
-# 15 February 2020
+# Paul Evans (10evans@cua.edu)
+# 13-20 February 2020
 #
 import math
 import matplotlib.pyplot as pp
@@ -17,7 +17,7 @@ def regression_slope(data_points):
     for i in range(n):
         xy_sum += x_values[i] * y_values[i]
         x_squared_sum += x_values[i] ** 2
-    return (xy_sum - n * x_bar * y_bar) / (x_squared_sum - n * x_bar **2)
+    return (xy_sum - n * x_bar * y_bar) / (x_squared_sum - n * x_bar ** 2)
 
 def plot_regression(data_points):
     x_values, y_values = zip(*data_points)
@@ -34,8 +34,32 @@ def plot_regression(data_points):
 def plot_data_bar(data_points):
     x_values, y_values = zip(*data_points)
     pp.bar(x_values, y_values)
-    pp.xticks([1, 5, 10, 15, 20])
+    pp.xticks([5, 10, 15, 20])
     pp.xlabel('rank')
+    pp.ylabel('word count')
+
+def plot_data_bar_20(word_pair_dict):
+    words = list(word_pair_dict.keys())
+    xy_values = list(word_pair_dict.values())
+    x_values, y_values = zip(*xy_values)
+    pp.bar(x_values, y_values)
+    pp.xticks(x_values, words, rotation='vertical')
+    pp.ylabel('word count')
+
+def plot_data_bar_400(word_pair_dict):
+    words = list(word_pair_dict.keys())
+    xy_values = list(word_pair_dict.values())
+    x_values, y_values = zip(*xy_values)
+    pp.bar(x_values, y_values)
+    pp.xticks([100, 200, 300, 400])
+    pp.ylabel('word count')
+
+def plot_data_bar_all(word_pair_dict):
+    words = list(word_pair_dict.keys())
+    xy_values = list(word_pair_dict.values())
+    x_values, y_values = zip(*xy_values)
+    pp.bar(x_values, y_values)
+    pp.xticks([10000, 20000, 30000, 40000])
     pp.ylabel('word count')
 
 def plot_data_scatter(data_points):
@@ -53,30 +77,56 @@ def logify(data_points):
     return list(zip(x_log, y_log))
 
 def main():
-    # theoretical Zipf distribution for 20 MFWs (bar plot)
-    x_tmp = [x for x in range(1, 21)]
-    y_tmp = [(1 / x) * 1861 for x in x_tmp]
-    plot_data_bar(list(zip(x_tmp, y_tmp)))
-    pp.title('theoretical Zipf distribution for 20 MFWs')
-    pp.savefig('PNGs/Zipf_0.png')
+    #
+    # rank-frequency data for Gratian's Decretum
+    #
+    word_pair_dict = eval(open('./dictionary.txt', 'r').read())
+    words = list(word_pair_dict.keys())
+    pairs = list(word_pair_dict.values())
+    #
+    # actual distribution for 20 MFWs from Gratian's Decretum
+    # (bar plot)
+    #
+    plot_data_bar_20(dict(zip(words[0:20], pairs[0:20])))
+    pp.title("actual distribution for 20 MFWs from Gratian's $\it{Decretum}$")
     pp.show()
-    # theoretical Zipf distribution for 20 MFWs (log-log scatter plot)
-    plot_data_scatter(logify(list(zip(x_tmp, y_tmp))))
-    slope = plot_regression(logify(list(zip(x_tmp, y_tmp))))
-    pp.title(f'theoretical Zipf distribution for 20 MFWs\n(log-log, slope = {slope:.4f})')
-    pp.savefig('PNGs/Zipf_1.png')
+    #
+    # actual distribution for 20 MFWs from Gratian's Decretum
+    # (log-log scatter plot)
+    #
+    plot_data_scatter(logify(pairs[0:20]))
+    slope = plot_regression(logify(pairs[0:20]))
+    pp.title("actual distribution for 20 MFWs from Gratian's $\it{Decretum}$\n(log-log, slope = " + f'{slope:.4f})')
     pp.show()
-    #  actual distribution for 20 MFWs from R1 and R2 dicta (bar plot)
-    data_points = [(1, 1861), (2, 1666), (3, 1638), (4, 1132), (5, 784), (6, 768), (7, 691), (8, 681), (9, 677), (10, 661), (11, 631), (12, 534), (13, 530), (14, 518), (15, 510), (16, 473), (17, 418), (18, 379), (19, 372), (20, 357)]
-    plot_data_bar(data_points)
-    pp.title('actual distribution for 20 MFWs from R1 and R2 $\it{dicta}$')
-    pp.savefig('PNGs/Zipf_2.png')
+    #
+    # actual distribution for 400 MFWs from Gratian's Decretum
+    # (bar plot)
+    #
+    plot_data_bar_400(dict(zip(words[0:400], pairs[0:400])))
+    pp.title("actual distribution for 400 MFWs from Gratian's $\it{Decretum}$")
     pp.show()
-    # actual distribution for 20 MFWs from R1 and R2 dicta (log-log scatter plot)
-    plot_data_scatter(logify(data_points))
-    slope = plot_regression(logify(data_points))
-    pp.title('actual distribution for 20 MFWs from R1 and R2 $\it{dicta}$\n(log-log, slope = ' + f'{slope:.4f})')
-    pp.savefig('PNGs/Zipf_3.png')
+    #
+    # actual distribution for 400 MFWs from Gratian's Decretum
+    # (log-log scatter plot)
+    #
+    plot_data_scatter(logify(pairs[0:400]))
+    slope = plot_regression(logify(pairs[0:400]))
+    pp.title("actual distribution for 400 MFWs from Gratian's $\it{Decretum}$\n(log-log, slope = " + f'{slope:.4f})')
+    pp.show()
+    #
+    # actual distribution for all words in Gratian's Decretum
+    # (bar plot)
+    #
+    plot_data_bar_all(dict(zip(words, pairs)))
+    pp.title("actual distribution for all words in Gratian's $\it{Decretum}$")
+    pp.show()
+    #
+    # actual distribution for all words in Gratian's $\it{Decretum}$
+    # (log-log scatter plot)
+    #
+    plot_data_scatter(logify(pairs))
+    slope = plot_regression(logify(pairs))
+    pp.title("actual distribution for all words in Gratian's $\it{Decretum}$\n(log-log, slope = " + f'{slope:.4f})')
     pp.show()
 
 if __name__ == "__main__":
