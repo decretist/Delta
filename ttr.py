@@ -15,6 +15,7 @@ def plot_log_pairs(pairs, stop):
         '$\it{Decretum}$' +
         f'\n(log-log, slope = {slope:.4f})'
     )
+    pp.savefig('./zipf_dist.png')
     pp.show()
 
 def main():
@@ -46,8 +47,7 @@ def main():
     for i in range(0, len(frequencies)): pairs.append((i + 1, frequencies[i]))
     word_pair_dict = dict(zip(words, pairs))
     #
-    for stop in [10, 20, 40, 400, 4000, 40000, len(pairs)]:
-        plot_log_pairs(pairs, stop)
+    plot_log_pairs(pairs, len(pairs))
 
 if __name__ == '__main__':
     main()
