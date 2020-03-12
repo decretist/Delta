@@ -33,7 +33,6 @@ def plot_regression(data_points):
 def plot_data_bar(data_points):
     x_values, y_values = zip(*data_points)
     pp.bar(x_values, y_values)
-    pp.xlabel('rank')
     pp.ylabel('frequency')
 
 def plot_data_scatter(data_points):
