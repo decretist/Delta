@@ -47,6 +47,14 @@ def figure_zd(pairs):
     pp.savefig('./PNGs/Figure_Zd')
     pp.show()
 
+def figure_ze(pairs):
+    n = len(pairs)
+    u.plot_data_scatter(u.logify(pairs[0:n]))
+    slope = u.plot_regression(u.logify(pairs[0:n]))
+    pp.title(f"actual Zipf distribution for {n} MFWs from Gratian's " + '$\it{dicta}$\n' + f'(log-log, slope = {slope:.4f})')
+    pp.savefig('./PNGs/Figure_Ze')
+    pp.show()
+
 def main():
     filenames = ['Gratian0.txt', 'Gratian1.txt', 'Gratian2.txt']
     tokens = []
@@ -61,7 +69,7 @@ def main():
     figure_zb(theoretical)
     figure_zc(dict(itertools.islice(tmp.items(), 30)))
     figure_zd(actual[0:30])
-    # figure_zd(actual)
+    figure_ze(actual)
 
 if __name__ == '__main__':
     main()
