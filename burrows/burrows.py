@@ -25,15 +25,12 @@ def main():
     '''
     frequency_dictionary = {}
     empty = dict.fromkeys(list(corpus_frequencies.keys())[:30], 0)
-    frequency_dictionary['mean'] = empty.copy()
-    frequency_dictionary['stdev'] = empty.copy()
     for author in authors:
         frequency_dictionary[author] = empty.copy()
         subcorpus = u.tokenize('./corpus/' + author + '.txt')
-        subcorpus_length = len(subcorpus)
         subcorpus_frequencies = u.frequencies(subcorpus)
         for word in corpus_most_frequent_words:
-            frequency_dictionary[author][word] = (subcorpus_frequencies.get(word, 0) / subcorpus_length) * 1000
+            frequency_dictionary[author][word] = (subcorpus_frequencies.get(word, 0) / len(subcorpus)) * 1000
     '''
     Then, calculate the mean and the standard deviation of these x
     values and use them as the offical mean and standard deviation
@@ -42,13 +39,14 @@ def main():
     representing the share of the entire corpus represented by each
     word.
     '''
+    means = empty.copy()
+    stdevs = empty.copy()
     for word in corpus_most_frequent_words:
         frequencies_list = []
         for author in authors:
             frequencies_list.append(frequency_dictionary[author][word])
-        frequency_dictionary['mean'][word] = statistics.mean(frequencies_list)
-        frequency_dictionary['stdev'][word] = statistics.stdev(frequencies_list)
-    print(frequency_dictionary)
+        means[word] = statistics.mean(frequencies_list)
+        stdevs[word] = statistics.stdev(frequencies_list)
 
 if __name__ == '__main__':
     main()
