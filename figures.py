@@ -5,6 +5,22 @@ import itertools
 import matplotlib.pyplot as pp
 import utility as u
 
+def half(tokens):
+    '''how far do we have to go down the frequency list to account
+    for half the words in the sample?'''
+    words = list(u.frequencies(tokens).keys())
+    frequencies = list(u.frequencies(tokens).values())
+    half = len(tokens) // 2
+    i = 0
+    total = 0
+    while total < half:
+        total += frequencies[i]
+        i += 1
+    far = (words[i], i, frequencies[i], total)
+    i -= 1
+    near = (words[i], i, frequencies[i], total)
+    return(near, half, far)
+
 def plot_data_bar(tmp):
     if isinstance(tmp, list):
         xy_values = tmp
@@ -60,6 +76,7 @@ def main():
     tokens = []
     for filename in filenames:
         tokens += u.tokenize('./corpus/' + filename)
+    print(half(tokens))
     tmp = u.rank_frequencies(u.frequencies(tokens))
     actual = list(tmp.values())
     scale = actual[0][1]
