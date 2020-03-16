@@ -16,21 +16,20 @@ def main():
     '''
     Find the n most frequent words in the corpus to use as features.
     '''
-    corpus_frequencies = u.frequencies(corpus)
-    corpus_most_frequent_words = (list(corpus_frequencies.keys()))[:30]
+    mfws = list(u.frequencies(corpus).keys())[:30]
     '''
     For each of these n features, calculate the share of each of
     the x authors’ subcorpora represented by this feature, as a
     percentage of the total number of words.
     '''
-    frequency_dictionary = {}
-    empty = dict.fromkeys(list(corpus_frequencies.keys())[:30], 0)
+    f_dict = {}
+    empty = dict.fromkeys(mfws, 0)
     for author in authors:
-        frequency_dictionary[author] = empty.copy()
+        f_dict[author] = empty.copy()
         subcorpus = u.tokenize('./corpus/' + author + '.txt')
         subcorpus_frequencies = u.frequencies(subcorpus)
-        for word in corpus_most_frequent_words:
-            frequency_dictionary[author][word] = (subcorpus_frequencies.get(word, 0) / len(subcorpus)) * 1000
+        for word in mfws:
+            f_dict[author][word] = (subcorpus_frequencies.get(word, 0) / len(subcorpus)) * 1000
     '''
     Then, calculate the mean and the standard deviation of these x
     values and use them as the offical mean and standard deviation
@@ -41,12 +40,26 @@ def main():
     '''
     means = empty.copy()
     stdevs = empty.copy()
-    for word in corpus_most_frequent_words:
-        frequencies_list = []
+    for word in mfws:
+        f_list = []
         for author in authors:
-            frequencies_list.append(frequency_dictionary[author][word])
-        means[word] = statistics.mean(frequencies_list)
-        stdevs[word] = statistics.stdev(frequencies_list)
+            f_list.append(f_dict[author][word])
+        means[word] = statistics.mean(f_list)
+        stdevs[word] = statistics.stdev(f_list)
+    '''
+    For each of the n features and x subcorpora, calculate a z-score
+    describing how far away from the corpus norm the usage of this
+    particular feature in this particular subcorpus happens to be.
+    To do this, subtract the "mean of means" for the feature from
+    the feature’s frequency in the subcorpus and divide the result
+    by the feature’s standard deviation.
+    '''
+    z_dict = {}
+    for author in authors:
+        z_dict[author] = empty.copy()
+        for word in mfws:
+            z_dict[author][word] = (f_dict[author][word] - means[word]) / stdevs[word]
+    print(z_dict)
 
 if __name__ == '__main__':
     main()
