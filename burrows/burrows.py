@@ -9,7 +9,9 @@ def main():
     Assemble a large corpus made up of texts written by an arbitrary
     number of authors; let’s say that number of authors is x.
     '''
+    test = 'cases' # only have to change this one line
     authors = ['cases', 'laws', 'marriage', 'other', 'penance', 'second']
+    authors.remove(test)
     corpus = []
     for author in authors:
         corpus += u.tokenize('./corpus/' + author + '.txt')
@@ -59,7 +61,19 @@ def main():
         z_dict[author] = empty.copy()
         for word in mfws:
             z_dict[author][word] = (f_dict[author][word] - means[word]) / stdevs[word]
-    print(z_dict)
+    '''
+    Then, calculate the same z-scores for each feature in the text
+    for which we want to determine authorship.
+    '''
+    test_tokens = []
+    test_tokens = u.tokenize('./corpus/' + test + '.txt')
+    test_frequencies = u.frequencies(test_tokens)
+    test_f_dict = test_z_dict = empty.copy()
+    for word in mfws:
+       test_f_dict[word] = (test_frequencies.get(word, 0) / len(test_tokens)) * 1000
+       # can collapse this into one loop
+       test_z_dict[word] = (test_f_dict[word] - means[word]) / stdevs[word]
+    print(test_z_dict)
 
 if __name__ == '__main__':
     main()
