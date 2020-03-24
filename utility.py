@@ -1,10 +1,32 @@
 #!/usr/local/bin/python3
 # Paul Evans (10evans@cua.edu)
+# 24 March 2020
 # 10 March 2020
 import math
 import matplotlib.pyplot as pp
 import re
 import statistics
+
+def write_csv(dict_of_dicts, filename):
+    '''
+    23-24 March 2020
+    Write out the contents of a dictionary of dictionaries as a CSV file.
+    The multidimensional dictionary is currently in column-major order,
+    which is probably wrong.
+    '''
+    f = open(filename, 'w')
+    cols = list(dict_of_dicts.keys())
+    rows = list(dict_of_dicts[cols[0]].keys())
+    f.write(',')
+    for col in cols:
+        f.write(col + ',')
+    f.write('\n')
+    for row in rows:
+        f.write(row + ',')
+        for col in cols:
+            f.write(str(dict_of_dicts[col][row]) + ',')
+        f.write('\n')
+    f.close()
 
 def regression_slope(data_points):
     n = len(data_points)

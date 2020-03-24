@@ -4,13 +4,15 @@
 import itertools
 import math
 import statistics
+import sys
+sys.path.append('..')
 import utility as u
 def main():
     '''
     Assemble a large corpus made up of texts written by an arbitrary
     number of authors; let’s say that number of authors is x.
     '''
-    test = 'penance' # only have to change this one line
+    test = 'cases' # only have to change this one line
     authors = ['cases', 'laws', 'marriage', 'other', 'penance', 'second']
     authors.remove(test)
     corpus = []
@@ -33,6 +35,7 @@ def main():
         subcorpus_frequencies = u.frequencies(subcorpus)
         for word in mfws:
             corp_f_dict[author][word] = (subcorpus_frequencies.get(word, 0) / len(subcorpus)) * 1000
+        u.write_csv(corp_f_dict, './foo_bar_baz_3.csv')
     '''
     Then, calculate the mean and the standard deviation of these x
     values and use them as the offical mean and standard deviation
