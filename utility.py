@@ -17,14 +17,11 @@ def write_csv(dict_of_dicts, filename):
     f = open(filename, 'w')
     cols = list(dict_of_dicts.keys())
     rows = list(dict_of_dicts[cols[0]].keys())
-    f.write(',')
-    for col in cols:
-        f.write(col + ',')
-    f.write('\n')
+    f.write(',' + ','.join(cols) + '\n') # column headers
     for row in rows:
-        f.write(row + ',')
+        f.write(row)
         for col in cols:
-            f.write(str(dict_of_dicts[col][row]) + ',')
+            f.write(',' + str(dict_of_dicts[col][row]))
         f.write('\n')
     f.close()
 
