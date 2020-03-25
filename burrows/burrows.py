@@ -35,7 +35,7 @@ def main():
         subcorpus_frequencies = u.frequencies(subcorpus)
         for word in mfws:
             corp_f_dict[author][word] = (subcorpus_frequencies.get(word, 0) / len(subcorpus)) * 1000
-        u.write_csv(corp_f_dict, './foo_bar_baz_3.csv')
+        u.write_csv(corp_f_dict, './subcorpus_frequencies.csv')
     '''
     Then, calculate the mean and the standard deviation of these x
     values and use them as the offical mean and standard deviation
