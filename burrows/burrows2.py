@@ -74,6 +74,21 @@ def get_z_scores(subcorpora, frequencies):
             z_scores[subcorpus][feature] = (frequencies[subcorpus][feature] - frequencies['means'][feature]) / frequencies['stdevs'][feature]
     return z_scores
 
+def add_test_values(test, features, frequencies, z_scores):
+    '''
+    Then, calculate the same z-scores for each feature in the text
+    for which we want to determine authorship.
+    '''
+    test_tokens = []
+    test_tokens = u.tokenize('./corpus/' + test + '.txt')
+    test_frequencies = u.frequencies(test_tokens)
+    frequencies[test] = dict.fromkeys(features, 0)
+    z_scores[test] = dict.fromkeys(features, 0)
+    for feature in features:
+       frequencies[test][feature] = (test_frequencies.get(feature, 0) / len(test_tokens)) * 1000
+       z_scores[test][feature] = (frequencies[test][feature] - frequencies['means'][feature]) / frequencies['stdevs'][feature]
+    return (frequencies, z_scores)
+
 def main(): # driver
     samples = ['cases', 'laws', 'marriage', 'other', 'penance', 'second']
     for sample in samples:
@@ -83,12 +98,13 @@ def main(): # driver
     # test first case only until working
     sample_list = samples.copy() # sample_list = samples[:]
     sample_list.remove('cases')
-    mfws = get_features(sample_list, 30)
-    tmp = get_frequencies(mfws, sample_list)
-    tmp = get_means(tmp)
-    u.write_csv(tmp, './f.csv')
-    tmp = get_z_scores(sample_list, tmp)
-    u.write_csv(tmp, './z.csv')
+    features = get_features(sample_list, 30)
+    tmp = get_frequencies(features, sample_list)
+    tmp1 = get_means(tmp)
+    tmp2 = get_z_scores(sample_list, tmp)
+    f, z = add_test_values('cases', features, tmp1, tmp2)
+    u.write_csv(f, './f.csv')
+    u.write_csv(z, './z.csv')
 
 if __name__ == '__main__':
     main()
