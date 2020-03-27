@@ -1,10 +1,13 @@
 #!/usr/local/bin/python3
 # Paul Evans (10evans@cua.edu)
 # 24-25 March 2020
+import math
 import statistics
 import sys
 sys.path.append('..')
 import utility as u
+
+path = './corpus/'
 
 def get_features(texts, n):
     '''
@@ -13,7 +16,7 @@ def get_features(texts, n):
     '''
     corpus = []
     for text in texts:
-        corpus += u.tokenize('./corpus/' + text + '.txt')
+        corpus += u.tokenize(path + text + '.txt')
     '''
     Find the n most frequent words in the corpus to use as features.
     '''
@@ -30,7 +33,7 @@ def get_frequencies(features, subcorpora):
     empty = dict.fromkeys(features, 0)
     for subcorpus in subcorpora:
         frequencies[subcorpus] = empty.copy()
-        subcorpus_tokens = u.tokenize('./corpus/' + subcorpus + '.txt')
+        subcorpus_tokens = u.tokenize(path + subcorpus + '.txt')
         subcorpus_frequencies = u.frequencies(subcorpus_tokens)
         for feature in features:
             frequencies[subcorpus][feature] = (subcorpus_frequencies.get(feature, 0) / len(subcorpus_tokens)) * 1000
@@ -80,7 +83,7 @@ def add_test_values(test, features, frequencies, z_scores):
     for which we want to determine authorship.
     '''
     test_tokens = []
-    test_tokens = u.tokenize('./corpus/' + test + '.txt')
+    test_tokens = u.tokenize(path + test + '.txt')
     test_frequencies = u.frequencies(test_tokens)
     frequencies[test] = dict.fromkeys(features, 0)
     z_scores[test] = dict.fromkeys(features, 0)
@@ -88,6 +91,27 @@ def add_test_values(test, features, frequencies, z_scores):
        frequencies[test][feature] = (test_frequencies.get(feature, 0) / len(test_tokens)) * 1000
        z_scores[test][feature] = (frequencies[test][feature] - frequencies['means'][feature]) / frequencies['stdevs'][feature]
     return (frequencies, z_scores)
+
+def get_deltas(subcorpora, features, z_scores, test):
+    '''
+    Finally, calculate a delta score comparing the anonymous paper
+    with each candidate’s subcorpus. To do this, take the average
+    of the absolute values of the differences between the z-scores
+    for each feature between the anonymous paper and the candidate’s
+    subcorpus. (Read that twice!) This gives equal weight to each
+    feature, no matter how often the words occur in the texts;
+    otherwise, the top 3 or 4 features would overwhelm everything
+    else.
+    '''
+    print(',' + ','.join(subcorpora))
+    print(test, end = '')
+    for subcorpus in subcorpora:
+        sum = 0
+        for feature in features:
+            sum += math.fabs(z_scores[subcorpus][feature] - z_scores[test][feature])
+        delta = sum / len(features)
+        print(',' + str(delta), end = '')
+    print('\n')
 
 def main(): # driver
     samples = ['cases', 'laws', 'marriage', 'other', 'penance', 'second']
@@ -105,6 +129,7 @@ def main(): # driver
     f, z = add_test_values('cases', features, tmp1, tmp2)
     u.write_csv(f, './f.csv')
     u.write_csv(z, './z.csv')
+    get_deltas(sample_list, features, z, 'cases')
 
 if __name__ == '__main__':
     main()
