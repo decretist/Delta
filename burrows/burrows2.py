@@ -116,20 +116,14 @@ def get_deltas(subcorpora, features, z_scores, test):
 def main(): # driver
     samples = ['cases', 'laws', 'marriage', 'other', 'penance', 'second']
     for sample in samples:
-        sample_list = samples[:] # sample_list = samples.copy()
+        sample_list = samples.copy() # sample_list = samples[:]
         sample_list.remove(sample)
-        # corpus = get_features(sample_list)
-    # test first case only until working
-    sample_list = samples.copy() # sample_list = samples[:]
-    sample_list.remove('cases')
-    features = get_features(sample_list, 30)
-    tmp = get_frequencies(features, sample_list)
-    tmp1 = get_means(tmp)
-    tmp2 = get_z_scores(sample_list, tmp)
-    f, z = add_test_values('cases', features, tmp1, tmp2)
-    u.write_csv(f, './f.csv')
-    u.write_csv(z, './z.csv')
-    get_deltas(sample_list, features, z, 'cases')
+        features = get_features(sample_list, 30)
+        tmp = get_frequencies(features, sample_list)
+        tmp1 = get_means(tmp)
+        tmp2 = get_z_scores(sample_list, tmp)
+        f, z = add_test_values(sample, features, tmp1, tmp2)
+        get_deltas(sample_list, features, z, sample)
 
 if __name__ == '__main__':
     main()
