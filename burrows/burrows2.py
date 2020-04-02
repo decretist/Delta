@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 # Paul Evans (10evans@cua.edu)
-# 24-25 March 2020
+# 2 Apr 2020
+# 24-26 Mar 2020
 import math
 import statistics
 import sys
@@ -103,27 +104,29 @@ def get_deltas(subcorpora, features, z_scores, test):
     otherwise, the top 3 or 4 features would overwhelm everything
     else.
     '''
-    print(',' + ','.join(subcorpora))
-    print(test, end = '')
+    deltas = dict.fromkeys(subcorpora, 0)
+    subcorpora.remove(test)
     for subcorpus in subcorpora:
         sum = 0
         for feature in features:
             sum += math.fabs(z_scores[subcorpus][feature] - z_scores[test][feature])
-        delta = sum / len(features)
-        print(',' + str(delta), end = '')
-    print('\n')
+        deltas[subcorpus] = sum / len(features)
+    return list(deltas.values())
 
-def main(): # driver
+def main():
     samples = ['cases', 'laws', 'marriage', 'other', 'penance', 'second']
+    file = open('./CSVs/d.csv', 'w')
+    file.write(',' + ','.join(samples) + '\n')
     for sample in samples:
-        sample_list = samples.copy() # sample_list = samples[:]
-        sample_list.remove(sample)
-        features = get_features(sample_list, 30)
-        tmp = get_frequencies(features, sample_list)
-        tmp1 = get_means(tmp)
-        tmp2 = get_z_scores(sample_list, tmp)
-        f, z = add_test_values(sample, features, tmp1, tmp2)
-        get_deltas(sample_list, features, z, sample)
+        tmp = samples.copy()
+        tmp.remove(sample) # all samples minus test case
+        features = get_features(tmp, 30)
+        frequencies = get_frequencies(features, tmp)
+        means = get_means(frequencies)
+        z_scores = get_z_scores(tmp, frequencies)
+        f, z = add_test_values(sample, features, means, z_scores)
+        deltas = get_deltas(samples[:], features, z, sample)
+        file.write(sample + ',' + ','.join(str(delta) for delta in deltas) + '\n')
 
 if __name__ == '__main__':
     main()
