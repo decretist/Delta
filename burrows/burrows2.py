@@ -8,7 +8,8 @@ import sys
 sys.path.append('..')
 import utility as u
 
-path = './corpus14/'
+path = './corpus4/'
+# path = './corpus14/'
 
 def get_features(texts, n):
     '''
@@ -114,13 +115,14 @@ def get_deltas(subcorpora, features, z_scores, test):
     return list(deltas.values())
 
 def main():
-    samples = ['cases', 'laws', 'orders1', 'orders2', 'simony', 'procedure', 'other1', 'other2', 'monastic', 'other3', 'heresy', 'marriage', 'penance', 'second']
+    samples = ['Gratian0', 'Gratian1', 'dePen', 'Gratian2']
+    # samples = ['cases', 'laws', 'orders1', 'orders2', 'simony', 'procedure', 'other1', 'other2', 'monastic', 'other3', 'heresy', 'marriage', 'penance', 'second']
     file = open('./CSVs/d.csv', 'w')
     file.write(',' + ','.join(samples) + '\n')
     for sample in samples:
         tmp = samples.copy()
         tmp.remove(sample) # all samples minus test case
-        features = get_features(tmp, 30)
+        features = get_features(tmp, 4)
         frequencies = get_frequencies(features, tmp)
         means = get_means(frequencies)
         z_scores = get_z_scores(tmp, frequencies)
