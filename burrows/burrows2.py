@@ -105,7 +105,8 @@ def get_deltas(subcorpora, features, z_scores, test):
     otherwise, the top 3 or 4 features would overwhelm everything
     else.
     '''
-    deltas = dict.fromkeys(subcorpora, 0)
+    # deltas = dict.fromkeys(subcorpora, 0)
+    deltas = dict.fromkeys(subcorpora, float('nan'))
     subcorpora.remove(test)
     for subcorpus in subcorpora:
         sum = 0
